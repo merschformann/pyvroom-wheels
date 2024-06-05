@@ -15,7 +15,7 @@ jobs:
                   ref: "main"
 
             - name: Set up Python
-              uses: actions/setup-python@v5
+              uses: deadsnakes/action@v3.1.0
               with:
                   python-version: "3.11"
 
