@@ -15,7 +15,7 @@ jobs:
         name: ${{ matrix.platform }}
         runs-on: ${{ matrix.worker }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
                 include:
                     - worker: ubuntu-latest
