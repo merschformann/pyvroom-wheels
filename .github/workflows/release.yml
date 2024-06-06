@@ -38,9 +38,10 @@ jobs:
                   ref: ${{ github.event.inputs.tag }}
 
             - name: Set up Python
+              if: ${{ matrix.platform != 'linux-arm64' }} # setup python does not support linux-arm64
               uses: actions/setup-python@v5
               with:
-                  python-version: 3.11.3
+                  python-version: 3.11
 
             - name: Install dependencies
               run: |
