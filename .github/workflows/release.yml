@@ -60,7 +60,7 @@ jobs:
                   choco install asio
 
             - name: Install dependencies (ubuntu)
-              if: ${{ matrix.platform == 'linux-x64' || matrix.platform == 'linux-arm64' }}
+              if: ${{ matrix.platform == 'linux-x64' }}
               run: |
                   sudo apt install -y libasio-dev
 
