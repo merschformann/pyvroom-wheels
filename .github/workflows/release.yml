@@ -11,65 +11,6 @@ permissions:
     contents: write
 
 jobs:
-    build_wheels:
-        name: ${{ matrix.platform }}
-        runs-on: ${{ matrix.image }}
-        strategy:
-            fail-fast: false
-            matrix:
-                include:
-                    - image: ubuntu-latest
-                      platform: linux
-                    - image: macos-latest
-                      platform: macos
-                    - image: windows-latest
-                      platform: windows
-
-        steps:
-            - uses: actions/checkout@v3
-              with:
-                  submodules: recursive
-
-            - name: Cache Conan
-              id: cache-conan
-              uses: actions/cache@v3
-              if: matrix.platform == 'windows'
-              with:
-                  path: |
-                      conan_build
-                      conan_data
-                  key: conan-${{ matrix.image }}-${{ hashFiles('conanfile.txt') }}
-
-            - name: Configure Python
-              uses: actions/setup-python@v4
-              if: matrix.platform == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
-              with:
-                  python-version: "3.x"
-
-            - name: Install Conan
-              if: matrix.image == 'windows-latest' && steps.cache-conan.outputs.cache-hit != 'true'
-              run: |
-                  pip install pip --upgrade
-                  pip install conan<2.0.0
-                  conan profile new default --detect
-                  conan profile update "settings.compiler=Visual Studio" default
-                  conan profile update "settings.compiler.version=17" default
-                  conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
-                  conan install --build=openssl --install-folder conan_build .
-
-            - uses: pypa/cibuildwheel@v2.16.5
-              env:
-                  MACOSX_DEPLOYMENT_TARGET: 10.14
-
-            - name: Verify clean directory
-              run: git diff --exit-code
-              shell: bash
-
-            - name: Upload wheels
-              uses: actions/upload-artifact@v3
-              with:
-                  path: wheelhouse/*.whl
-
     build:
         name: ${{ matrix.platform }}
         runs-on: ${{ matrix.worker }}
@@ -77,12 +18,6 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    # - worker: ubuntu-latest
-                    #   platform: linux-x64
-                    # - worker: macos-latest
-                    #   platform: macos-x64
-                    # - worker: windows-latest
-                    #   platform: windows-x64
                     - worker: rpi
                       platform: linux-arm64
 
@@ -96,80 +31,17 @@ jobs:
                   submodules: "recursive"
                   ref: ${{ github.event.inputs.tag }}
 
-            - name: Set up Python
-              if: ${{ matrix.platform != 'linux-arm64' }} # setup python does not support linux-arm64
-              uses: actions/setup-python@v5
-              with:
-                  python-version: 3.11
-
             - name: Install build dependencies
               run: |
                   python -m pip install --upgrade pip
                   pip install -r build-requirements.txt
                   pip install build hatch
 
-            - name: Install dependencies (macOS)
-              if: ${{ matrix.platform == 'macos-x64' }}
+            - name: Build wheels
               run: |
-                  brew install asio
-
-            - name: Install dependencies (windows)
-              if: ${{ matrix.platform == 'windows-x64' }}
-              run: |
-                  choco install asio
-
-            - name: Install dependencies (ubuntu)
-              if: ${{ matrix.platform == 'linux-x64' }}
-              run: |
-                  sudo apt install -y libasio-dev
-
-            - name: Build package
-              run: |
-                  python -m build
-
-            - name: Upload package
-              uses: actions/upload-artifact@v3
-              with:
-                  path: dist/*
-                  overwrite: true
-
-    publish:
-        runs-on: ubuntu-latest
-        needs: [build, build_wheels]
-        strategy:
-            matrix:
-                include:
-                    - target-env: pypi
-                      target-url: https://pypi.org/p/exvis
-                    - target-env: testpypi
-                      target-url: https://test.pypi.org/p/exvis
-        environment:
-            name: ${{ matrix.target-env }}
-            url: ${{ matrix.target-url }}
-        permissions:
-            contents: read
-            id-token: write # This is required for trusted publishing to PyPI
-        steps:
-            - uses: actions/download-artifact@v3
-              with:
-                  name: artifact
-                  path: dist
-
-            - name: Publish package distributions to PyPI
-              if: ${{ matrix.target-env == 'pypi' }}
-              uses: pypa/gh-action-pypi-publish@release/v1
-              with:
-                  packages-dir: ./dist
-
-            - name: Publish package distributions to TestPyPI
-              if: ${{ matrix.target-env == 'testpypi' }}
-              uses: pypa/gh-action-pypi-publish@release/v1
-              with:
-                  repository-url: https://test.pypi.org/legacy/
-                  packages-dir: ./dist
+                  pip wheel . --no-deps -w dist
 
             - name: Create release
-              if: ${{ matrix.target-env == 'pypi' }}
               uses: softprops/action-gh-release@v2
               with:
                   files: dist/*
