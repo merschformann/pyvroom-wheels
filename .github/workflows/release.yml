@@ -49,6 +49,21 @@ jobs:
                   pip install -r build-requirements.txt
                   pip install build hatch
 
+            - name: Install dependencies (macOS)
+              if: ${{ matrix.platform == 'macos-x64' }}
+              run: |
+                  brew install asio
+
+            - name: Install dependencies (windows)
+              if: ${{ matrix.platform == 'windows-x64' }}
+              run: |
+                  choco install asio
+
+            - name: Install dependencies (ubuntu)
+              if: ${{ matrix.platform == 'linux-x64' || matrix.platform == 'linux-arm64' }}
+              run: |
+                  sudo apt install -y libasio-dev
+
             - name: Build package
               run: |
                   python -m build
