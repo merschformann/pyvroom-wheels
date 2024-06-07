@@ -38,6 +38,12 @@ jobs:
               with:
                   path: self
 
+            - name: Setup Python
+              if: matrix.platform == 'linux-x64'
+              uses: actions/setup-python@v5
+              with:
+                  python-version: 3.11
+
             - name: Apply patches
               run: |
                   git apply self/patches/*.patch
@@ -46,12 +52,11 @@ jobs:
               run: |
                   python -m pip install --upgrade pip
                   pip install -r build-requirements.txt
-                  pip install build hatch
+                  pip install cibuildwheel
 
             - name: Build wheels
-              uses: pypa/cibuildwheel@v2.18.1
-              env:
-                  MACOSX_DEPLOYMENT_TARGET: 10.14
+              run: |
+                  python -m cibuildwheel --output-dir wheelhouse
 
             - name: Upload wheels
               uses: actions/upload-artifact@v4
