@@ -1,0 +1,16 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 41c43e4..c97f71a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -30,9 +30,8 @@ manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
+ 
+ [tool.cibuildwheel.linux]
+ before-all = """
+-dnf update -y
+-dnf module enable -y mariadb-devel
+-dnf install -y openssl-devel asio-devel
++yum install -y epel-release
++yum install -y openssl-devel asio-devel
+ """
+ 
+ [[tool.cibuildwheel.overrides]]
