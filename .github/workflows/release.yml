@@ -47,6 +47,10 @@ jobs:
             - name: Apply patches
               run: |
                   git apply self/patches/*.patch
+                  echo "Status after applying patches:"
+                  git status
+                  echo "Diff after applying patches:"
+                  git diff
 
             - name: Install build dependencies
               run: |
