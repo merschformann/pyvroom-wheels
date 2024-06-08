@@ -79,7 +79,14 @@ jobs:
         needs: build
         strategy:
             matrix:
-                target-env: [pypi, pypi-test]
+                include:
+                    - target-env: pypi
+                      target-url: https://pypi.org/p/pyvroomwheels
+                    - target-env: pypi-test
+                      target-url: https://test.pypi.org/p/pyvroomwheels
+        environment:
+            name: ${{ matrix.target-env }}
+            url: ${{ matrix.target-url }}
         permissions:
             id-token: write # This is required for trusted publishing to PyPI
         steps:
