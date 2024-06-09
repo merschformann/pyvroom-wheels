@@ -60,6 +60,7 @@ jobs:
 
             - name: Build wheels
               run: |
+                  export PYVROOM_VERSION=$TAG
                   python -m cibuildwheel --output-dir wheelhouse
 
             - name: List files
