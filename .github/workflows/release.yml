@@ -58,7 +58,7 @@ jobs:
             - name: Apply patches (non-Windows)
               if: matrix.os != 'windows'
               run: |
-                  git apply self/patches/$TAG/*.patch
+                  git apply self/patches/$TAG.patch
                   echo "Status after applying patches:"
                   git status
                   echo "Diff after applying patches:"
@@ -68,7 +68,7 @@ jobs:
             - name: Apply patches (Windows)
               if: matrix.os == 'windows'
               run: |
-                  git apply self/patches/$env:TAG/*.patch
+                  git apply self/patches/$env:TAG.patch
                   echo "Status after applying patches:"
                   git status
                   echo "Diff after applying patches:"
