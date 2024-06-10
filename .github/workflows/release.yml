@@ -95,6 +95,11 @@ jobs:
               run: |
                   echo $PYVROOM_VERSION > VERSION
 
+            - name: Make version available on Windows runners
+              if: matrix.os == 'windows'
+              run: |
+                  echo "PYVROOM_VERSION=${{ env.PYVROOM_VERSION }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
             - name: Install build dependencies
               run: |
                   python -m pip install --upgrade pip
