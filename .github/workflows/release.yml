@@ -20,17 +20,28 @@ jobs:
                 include:
                     - worker: [rpi, raw]
                       platform: linux-arm64
-                    - worker: [ubuntu-latest]
+                      os: linux
+                      host: self
+                    - worker: ubuntu-latest
                       platform: linux-x64
+                      os: linux
+                      host: gh
                     - worker: [macmini, raw]
                       platform: macos-arm64
+                      os: macos
+                      host: self
                     - worker: macos-latest
                       platform: macos-x64
+                      os: macos
+                      host: gh
                     - worker: windows-latest
                       platform: windows-x64
+                      os: windows
+                      host: gh
 
         env:
             TAG: ${{ github.event.inputs.tag }}
+            PYVROOM_VERSION: ${{ github.event.inputs.tag }}
         steps:
             - name: Checkout pyvroom
               uses: actions/checkout@v4
@@ -42,7 +53,7 @@ jobs:
             - name: Cache Conan
               id: cache-conan
               uses: actions/cache@v3
-              if: matrix.platform == 'windows-x64'
+              if: matrix.os == 'windows'
               with:
                   path: |
                       conan_build
@@ -55,13 +66,13 @@ jobs:
                   path: self
 
             - name: Setup Python
-              if: matrix.platform == 'linux-x64' || matrix.platform == 'macos-x64' || matrix.platform == 'windows-x64'
+              if: matrix.host == 'gh'
               uses: actions/setup-python@v5
               with:
                   python-version: 3.11
 
             - name: Install Conan
-              if: matrix.platform == 'windows-x64' && steps.cache-conan.outputs.cache-hit != 'true'
+              if: matrix.os == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
               run: |
                   pip install pip --upgrade
                   pip install conan<2.0.0
@@ -82,7 +93,7 @@ jobs:
 
             - name: Write version
               run: |
-                  echo $TAG > VERSION
+                  echo $PYVROOM_VERSION > VERSION
 
             - name: Install build dependencies
               run: |
@@ -101,7 +112,6 @@ jobs:
 
             - name: Build wheels
               run: |
-                  export PYVROOM_VERSION=$TAG
                   python -m cibuildwheel --output-dir wheelhouse
 
             - name: List files
