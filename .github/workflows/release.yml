@@ -173,7 +173,7 @@ jobs:
             - name: Rename wheels
               run: |
                   for file in dist/*.whl; do
-                      mv $file $(echo $file | sed "s/pyvroom/pyvroomwheels/")
+                      mv -v $file $(echo $file | sed "s/pyvroom/pyvroomwheels/")
                   done
 
             - name: Create release
