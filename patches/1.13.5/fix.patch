@@ -1,12 +1,21 @@
+diff --git a/VERSION b/VERSION
+new file mode 100644
+index 0000000..d0e60d6
+--- /dev/null
++++ b/VERSION
+@@ -0,0 +1 @@
++1.13.5
+\ No newline at end of file
 diff --git a/pyproject.toml b/pyproject.toml
-index 41c43e4..8de4c63 100644
+index 41c43e4..20a7e87 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -26,13 +26,11 @@ test-command = 'python -c "import vroom"'
+@@ -26,13 +26,12 @@ test-command = 'python -c "import vroom"'
  build = "cp*"
  skip = "*musllinux*"
  archs = "native"
 -manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
++environment = "PYVROOM_VERSION=$(cat VERSION)"
  
  [tool.cibuildwheel.linux]
  before-all = """
@@ -19,7 +28,7 @@ index 41c43e4..8de4c63 100644
  
  [[tool.cibuildwheel.overrides]]
 diff --git a/setup.py b/setup.py
-index 8d838ef..5c0270f 100644
+index 8d838ef..afe0f44 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -80,6 +80,6 @@ setup(
@@ -27,6 +36,6 @@ index 8d838ef..5c0270f 100644
      ext_package="vroom",
      include_dirs=include_dirs,
 -    use_scm_version=True,
-+    version=os.environ.get("PYVROOM_VERSION", "0.0.0"),
++    version=os.environ["PYVROOM_VERSION"],
      entry_points={"console_scripts": ["vroom=vroom:main"]},
  )
