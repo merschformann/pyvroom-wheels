@@ -24,7 +24,7 @@ jobs:
                       platform: linux-x64
                     - worker: [macmini, raw]
                       platform: macos-arm64
-                    - image: macos-latest
+                    - worker: macos-latest
                       platform: macos-x64
 
         env:
