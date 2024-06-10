@@ -67,6 +67,15 @@ jobs:
                   pip install -r build-requirements.txt
                   pip install cibuildwheel
 
+            - name: Install asio on macOS
+              if: matrix.platform == 'macos-x64' || matrix.platform == 'macos-arm64'
+              run: |
+                  brew install asio
+                  echo "LDFLAGS="-L/opt/homebrew/lib" >> $GITHUB_ENV
+                  echo "CPPFLAGS="-I/opt/homebrew/include" >> $GITHUB_ENV
+                  # echo "MACOSX_DEPLOYMENT_TARGET="10.14" >> $GITHUB_ENV
+                  echo "MACOSX_DEPLOYMENT_TARGET="14.0" >> $GITHUB_ENV
+
             - name: Build wheels
               run: |
                   export PYVROOM_VERSION=$TAG
