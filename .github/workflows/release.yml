@@ -39,6 +39,16 @@ jobs:
                   submodules: "recursive"
                   ref: ${{ github.event.inputs.tag }}
 
+            - name: Cache Conan
+              id: cache-conan
+              uses: actions/cache@v3
+              if: matrix.platform == 'windows-x64'
+              with:
+                  path: |
+                      conan_build
+                      conan_data
+                  key: conan-${{ matrix.worker }}-${{ hashFiles('conanfile.txt') }}
+
             - name: Checkout self
               uses: actions/checkout@v4
               with:
@@ -49,6 +59,17 @@ jobs:
               uses: actions/setup-python@v5
               with:
                   python-version: 3.11
+
+            - name: Install Conan
+              if: matrix.platform == 'windows-x64' && steps.cache-conan.outputs.cache-hit != 'true'
+              run: |
+                  pip install pip --upgrade
+                  pip install conan<2.0.0
+                  conan profile new default --detect
+                  conan profile update "settings.compiler=Visual Studio" default
+                  conan profile update "settings.compiler.version=17" default
+                  conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
+                  conan install --build=openssl --install-folder conan_build .
 
             - name: Apply patches
               run: |
