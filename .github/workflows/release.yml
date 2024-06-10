@@ -50,6 +50,31 @@ jobs:
                   submodules: "recursive"
                   ref: ${{ github.event.inputs.tag }}
 
+            - name: Checkout self
+              uses: actions/checkout@v4
+              with:
+                  path: self
+
+            - name: Apply patches (non-Windows)
+              if: matrix.os != 'windows'
+              run: |
+                  git apply self/patches/$TAG/*.patch
+                  echo "Status after applying patches:"
+                  git status
+                  echo "Diff after applying patches:"
+                  git add --all
+                  git diff --cached
+
+            - name: Apply patches (Windows)
+              if: matrix.os == 'windows'
+              run: |
+                  git apply self/patches/$env:TAG/*.patch
+                  echo "Status after applying patches:"
+                  git status
+                  echo "Diff after applying patches:"
+                  git add --all
+                  git diff --cached
+
             - name: Cache Conan
               id: cache-conan
               uses: actions/cache@v3
@@ -59,11 +84,6 @@ jobs:
                       conan_build
                       conan_data
                   key: conan-${{ matrix.worker }}-${{ hashFiles('conanfile.txt') }}
-
-            - name: Checkout self
-              uses: actions/checkout@v4
-              with:
-                  path: self
 
             - name: Setup Python
               if: matrix.host == 'gh'
@@ -81,15 +101,6 @@ jobs:
                   conan profile update "settings.compiler.version=17" default
                   conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
                   conan install --build=openssl --install-folder conan_build .
-
-            - name: Apply patches
-              run: |
-                  git apply self/patches/$TAG/*.patch
-                  echo "Status after applying patches:"
-                  git status
-                  echo "Diff after applying patches:"
-                  git add --all
-                  git diff --cached
 
             - name: Write version
               run: |
