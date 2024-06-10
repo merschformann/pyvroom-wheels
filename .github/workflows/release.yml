@@ -130,9 +130,15 @@ jobs:
               run: |
                   python -m cibuildwheel --output-dir wheelhouse
 
-            - name: List files
+            - name: List files (non-Windows)
+              if: matrix.os != 'windows'
               run: |
                   ls -ahl wheelhouse
+
+            - name: List files (Windows)
+              if: matrix.os == 'windows'
+              run: |
+                  Get-ChildItem -Path wheelhouse
 
             - name: Upload wheels
               uses: actions/upload-artifact@v3
