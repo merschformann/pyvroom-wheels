@@ -89,7 +89,7 @@ jobs:
               if: matrix.host == 'gh'
               uses: actions/setup-python@v5
               with:
-                  python-version: 3.11
+                  python-version: 3.12
 
             - name: Install Conan
               if: matrix.os == 'windows' && steps.cache-conan.outputs.cache-hit != 'true'
