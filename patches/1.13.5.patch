@@ -18,6 +18,18 @@ index 41c43e4..8de4c63 100644
  """
  
  [[tool.cibuildwheel.overrides]]
+diff --git a/setup.cfg b/setup.cfg
+index f5401e6..6959462 100644
+--- a/setup.cfg
++++ b/setup.cfg
+@@ -1,6 +1,6 @@
+ [metadata]
+ version = 0.1.0
+-name = pyvroom
++name = pyvroomwheels
+ description = Vehicle routing open-source optimization machine (VROOM)
+ long_description = file: README.rst
+ long_description_content_type = text/x-rst
 diff --git a/setup.py b/setup.py
 index 8d838ef..f560dcd 100644
 --- a/setup.py
