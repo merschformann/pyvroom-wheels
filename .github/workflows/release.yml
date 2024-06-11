@@ -41,7 +41,6 @@ jobs:
 
         env:
             TAG: ${{ github.event.inputs.tag }}
-            PYVROOM_VERSION: ${{ github.event.inputs.tag }}
         steps:
             - name: Checkout pyvroom
               uses: actions/checkout@v4
@@ -102,15 +101,6 @@ jobs:
                   conan config set "storage.path=$env:GITHUB_WORKSPACE/conan_data"
                   conan install --build=openssl --install-folder conan_build .
 
-            - name: Write version
-              run: |
-                  echo $PYVROOM_VERSION > VERSION
-
-            - name: Make version available on Windows runners
-              if: matrix.os == 'windows'
-              run: |
-                  echo "PYVROOM_VERSION=${{ env.PYVROOM_VERSION }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
             - name: Install build dependencies
               run: |
                   python -m pip install --upgrade pip
@@ -128,7 +118,6 @@ jobs:
 
             - name: Build wheels
               run: |
-                  python -c 'import os; print(os.environ["PYVROOM_VERSION"])'
                   python -m cibuildwheel --output-dir wheelhouse
 
             - name: List files (non-Windows)
