@@ -1,13 +1,12 @@
 diff --git a/pyproject.toml b/pyproject.toml
-index 41c43e4..20a7e87 100644
+index 41c43e4..8de4c63 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -26,13 +26,12 @@ test-command = 'python -c "import vroom"'
+@@ -26,13 +26,11 @@ test-command = 'python -c "import vroom"'
  build = "cp*"
  skip = "*musllinux*"
  archs = "native"
 -manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
-+environment = "PYVROOM_VERSION=$(cat VERSION)"
  
  [tool.cibuildwheel.linux]
  before-all = """

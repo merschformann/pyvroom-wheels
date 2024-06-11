@@ -175,6 +175,12 @@ jobs:
               run: |
                   ls -ahl dist
 
+            - name: Rename wheels
+              run: |
+                  for file in dist/*.whl; do
+                      mv -v $file $(echo $file | sed "s/pyvroom/pyvroomwheels/")
+                  done
+
             - name: Publish package distributions to PyPI
               if: ${{ matrix.target-env == 'pypi' }}
               uses: pypa/gh-action-pypi-publish@release/v1
