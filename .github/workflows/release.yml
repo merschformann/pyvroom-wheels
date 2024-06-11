@@ -128,7 +128,7 @@ jobs:
 
             - name: Build wheels
               run: |
-                  python -c "import os; print(os.environ)"
+                  python -c 'import os; print(os.environ["PYVROOM_VERSION"])'
                   python -m cibuildwheel --output-dir wheelhouse
 
             - name: List files (non-Windows)
