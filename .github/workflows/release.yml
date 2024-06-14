@@ -42,6 +42,13 @@ jobs:
         env:
             TAG: ${{ github.event.inputs.tag }}
         steps:
+            - name: Show platform info (non Windows)
+              if: matrix.os != 'windows'
+              run: |
+                  echo "Platform: ${{ matrix.platform }}"
+                  echo "OS: ${{ matrix.os }}"
+                  echo "Host: ${{ matrix.host }}"
+                  uname -a
             - name: Checkout pyvroom
               uses: actions/checkout@v4
               with:
