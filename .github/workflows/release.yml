@@ -18,10 +18,10 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - worker: macos-14
+                    - worker: [macmini, raw]
                       platform: linux-arm64
                       os: linux
-                      host: gh
+                      host: self
                     - worker: ubuntu-latest
                       platform: linux-x64
                       os: linux
@@ -83,15 +83,6 @@ jobs:
                       conan_build
                       conan_data
                   key: conan-${{ matrix.worker }}-${{ hashFiles('conanfile.txt') }}
-
-            - name: Setup docker for linux builds on macOS
-              if: matrix.platform == 'linux-arm64'
-              run: |
-                  HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask docker
-                  sudo /Applications/Docker.app/Contents/MacOS/Docker --unattended --install-privileged-components
-                  open -a /Applications/Docker.app --args --unattended --accept-license
-                  echo "We are waiting for Docker to be up and running. It can take over 2 minutes..."
-                  while ! /Applications/Docker.app/Contents/Resources/bin/docker info &>/dev/null; do sleep 1; done
 
             - name: Setup Python
               if: matrix.host == 'gh'
