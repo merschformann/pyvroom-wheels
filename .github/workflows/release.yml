@@ -124,7 +124,7 @@ jobs:
             - name: Build wheels (Linux ARM64)
               if: matrix.platform == 'linux-arm64'
               run: |
-                  python -m cibuildwheel --platform linux --output-dir wheelhouse
+                  python -m cibuildwheel --platform linux --archs aarch64 --output-dir wheelhouse
 
             - name: List files (non-Windows)
               if: matrix.os != 'windows'
