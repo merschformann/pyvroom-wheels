@@ -1,5 +1,7 @@
 # pyvroom-wheels
 
+> :warning: As of [Pyvroom version v1.13.6](https://pypi.org/project/pyvroom/1.13.6/), the package is available for the additional platforms that this project was created for. Thus, this project is now deprecated. Please use the original package instead.
+
 This project provides wheels for the [Pyvroom](https://github.com/VROOM-Project/pyvroom) project for further platforms (including the linux-arm64 platform built on an RPi <img src="material/rpi-logo.png" height="20" /> with ❤️).
 
 ## Usage
